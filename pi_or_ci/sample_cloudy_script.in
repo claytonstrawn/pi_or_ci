@@ -1,0 +1,50 @@
+Table HM12 z=0
+radius 0.001 linear parsecs
+hden -1 vary
+grid -8 2.5 0.1
+constant temperature 4 vary
+grid 2.0 8.0 0.1
+print off hide
+elements read
+helium
+lithium
+beryllium
+boron
+carbon
+nitrogen
+oxygen
+fluorine
+neon
+sodium
+magnesium
+aluminium
+silicon
+end of elements
+element nickel off
+element sulphur off
+element argon off
+element calcium off
+element iron off
+element Phosphor off
+element Chlorine off
+element Potassium off
+element Scandium off
+element Titanium off
+element Vanadium off
+element Chromium off
+element Manganese off
+element Cobalt off
+element Copper off
+element Zinc off
+print on
+double ; mimic two-siced photoionization # This gas is optically thin
+set nend 1   # to avoid dividing the gas into many zones,
+stop zone 1
+iterate to convergance
+save ionization rates oxygen "_oxygen.dat"
+save ionization rates neon "_neon.dat"
+save ionization rates carbon "_carbon.dat"
+save ionization rates magnesium "_magnesium.dat"
+save ionization rates nitrogen "_nitrogen.dat"
+save ionization rates silicon "_silicon.dat"
+punch overview last "_.ovr"
