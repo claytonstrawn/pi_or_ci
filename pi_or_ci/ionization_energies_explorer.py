@@ -29,6 +29,8 @@ second10 = """
 14	Si	silicon	45,962	50,502	235,196	257,923
 """
 
+ignore = ['Na I','Na II','Mg I','Mg II','Al I','Al II','Si I','Si II']
+
 def get_energy_dict():
     convert_kJpermol_to_eV = 0.0103642688 #https://en.wikipedia.org/wiki/Ionization_energies_of_the_elements_(data_page)
     atoms = []
@@ -86,6 +88,8 @@ def get_cutoffs_dict(ions,redshift,t_used,cutoffs = None):
         try:
             PI_cutoff_temps_dict[ion] = f(cutoffs_for_ion_at_redshift(ion,redshift,cutoffs=cutoffs)[1])
         except:
+            PI_cutoff_temps_dict[ion] = np.nan
+        if ion in ignore:
             PI_cutoff_temps_dict[ion] = np.nan
     return PI_cutoff_temps_dict
 

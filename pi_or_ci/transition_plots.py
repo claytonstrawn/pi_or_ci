@@ -1,6 +1,21 @@
 from pi_or_ci.file_loader import make_list_of_names
 from pi_or_ci.utils import vars_to_name
 import numpy as np
+import matplotlib.patches as patches
+
+def overlay_inappropriate_sections(atom,ax,xs,n=1):
+    lowerbound = 2.0
+    upperbound = 4.2
+    low_x = (xs[0]*n-1.5+1.0)
+    high_x = (xs[1]*n-1.5+1.0)
+    data_offset = 2
+    data_range = 10
+    rect = patches.Rectangle((low_x, lowerbound-data_offset), n, 
+                             (upperbound-lowerbound)*data_range, linewidth=1, 
+                             edgecolor='r', facecolor='grey')
+    if atom in ['Na','Mg','Al','Si']:
+        ax.add_patch(rect)
+
 
 def plot_transitions(atom,redshift=0.0,radfield = 'HM12',ax=None,data=None,cutoffs=None,cmap = 'rainbow',maxval = 4):
     try:

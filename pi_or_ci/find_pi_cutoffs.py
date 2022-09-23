@@ -16,10 +16,11 @@ def find_PI_cutoff(data,threshold = .05,loud = False,min_stable_num=5,negligible
     name,ions,temps,densities,Us,ion_fractions = data
     atom,redshift,radfield = name_to_vars(name)
     unique_temps = np.unique(temps)
-    ret_ts = np.zeros(len(unique_temps))
-    ret_rhos = np.zeros((len(unique_temps),len(ions)))
-    tiny = np.zeros((len(unique_temps),len(ions)),dtype = bool)
-    PI_or_CI = np.zeros((len(unique_temps),len(ions))) #-1 = PI, 0 = transition, +1 = CI
+    ntemps = len(unique_temps)
+    ret_ts = np.zeros(ntemps)
+    ret_rhos = np.zeros((ntemps,len(ions)))
+    tiny = np.zeros((ntemps,len(ions)),dtype = bool)
+    PI_or_CI = np.zeros((ntemps,len(ions))) #-1 = PI, 0 = transition, +1 = CI
     for i,t in enumerate(unique_temps):
         log("T=10**%.2f,z=%.2f"%(np.log10(t),redshift),loud)
         ret_ts[i] = t
@@ -45,7 +46,7 @@ def find_PI_cutoff(data,threshold = .05,loud = False,min_stable_num=5,negligible
                         log('no transition found, but %s switched from PI to CI at t=%.2e'%(ion,t),loud)
                 else:
                     PI_or_CI[i,j] = -1
-                    if i>0 and PI_or_CI[i-1,j]==1 and not tiny[i,j]:
+                    if i>0 and PI_or_CI[i-1,j]==1 and not tiny[i,j] and False:
                         PI_or_CI[:i,j] = -1
                         log('transitioned %s back to PI from CI at t=%.2e, assuming error and overwriting'%(ion,t),loud)
                 ietype = 'PIE' if PI_or_CI[i,j] == -1 else 'CIE'
@@ -76,7 +77,7 @@ def find_PI_cutoff(data,threshold = .05,loud = False,min_stable_num=5,negligible
                         log('%s starts PI, goes CI at %.2e'%(ion,ret_rhos[i,j]),loud)
                 else:
                     #all PI
-                    if i>0 and PI_or_CI[i-1,j] == 1 and not tiny[i,j]:
+                    if i>0 and PI_or_CI[i-1,j] == 1 and not tiny[i,j] and False:
                         ret_rhos[i,j] = 1e-12
                         PI_or_CI[:i,j] = -1
                         log('transitioned %s back to PI from CI at t=%.2e, assuming error and overwriting'%(ion,t),loud)
@@ -87,8 +88,8 @@ def find_PI_cutoff(data,threshold = .05,loud = False,min_stable_num=5,negligible
                 if PI_or_CI[i,j] == -1 or PI_or_CI[i,j-1] == -1:
                     log('If one of %s and %s is PI, they must both be'%(ion[:-1],ion),loud)
                     if (not tiny[i,j] and not tiny[i,j-1]):
-                        PI_or_CI[:i+1,j-1] = -1
-                        PI_or_CI[:i+1,j] = -1
+                        PI_or_CI[i,j-1] = -1
+                        PI_or_CI[i,j] = -1
                     else:
                         PI_or_CI[i,j-1] = -1
                         PI_or_CI[i,j] = -1
