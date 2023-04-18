@@ -1,6 +1,8 @@
 from pi_or_ci.utils import vars_to_name,cycle_colors
 import numpy as np
 
+ignore = ['Na I','Na II','Mg I','Mg II','Al I','Al II','Si I','Si II']
+
 def get_cutoffs(ion,redshift,radfield = 'HM12',data=None,cutoffs=None,small_offset = .05):
     atom = ion.split(' ')[0]
     name = vars_to_name(atom,redshift,radfield)
@@ -34,6 +36,8 @@ def cutoffs_for_ion_at_redshift(ion,redshift,radfield = 'HM12',cutoffs = None):
 def format_cutoffs(ions,redshifts,data,cutoffs,write_to = None,overwrite = False):
     to_return = ''
     for ion in ions:
+        if ion in ignore:
+            continue
         to_return+=ion+'\n'
         for redshift in redshifts:
             try:
@@ -85,7 +89,7 @@ def plot_cutoffs(atom,redshift,radfield='HM12',ax=None,ions=None,log='ticks',vof
     if ax is None:
         fig,ax = plt.subplots(1,1)
     for i,ion in enumerate(all_ions):
-        if ion not in ions:
+        if ion not in ions or ion in ignore:
             continue
         density_lims = np.array([1e-8,3e2])
         temp_lims = np.array([1e2,1e8])
@@ -125,6 +129,8 @@ def connect_cutoffs(atom,redshifts,radfield='HM12',ax=None,voffset = .2,\
     skip = len(all_ions)//max_num_ions
     disp_ions = all_ions[::skip]
     for i,ion in enumerate(disp_ions):
+        if ion in ignore:
+            continue
         ts = get_cutoffs(ion,redshifts[0],data=data,cutoffs=cutoffs)[1]
         ts = np.log10(ts)
         list_of_lines_xs = {}

@@ -57,7 +57,8 @@ def get_all_data_and_cutoffs(location = 'default',loud=False,\
         if os.path.exists(to_search_for):
             filenames.append(to_search_for)
         else:
-            print('file %s not found'%to_search_for)
+            if loud:
+                print('file %s not found'%to_search_for)
     data = {}
     cutoffs = {}
     for i,f in enumerate(sorted(filenames)):

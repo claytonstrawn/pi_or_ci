@@ -2,11 +2,19 @@ import matplotlib.colors as mcolors
 from matplotlib.lines import Line2D
 import roman
 import matplotlib.pyplot as plt
-cycle_colors = (list(plt.rcParams['axes.prop_cycle'].by_key()['color'])+ ["red", "indigo",'blue','gold','magenta'])*4
+import matplotlib
+mpl_defaults = (list(plt.rcParams['axes.prop_cycle'].by_key()['color'])+ ["red", "indigo",'blue','gold','magenta'])*4
 colors1 = mcolors.BASE_COLORS
 colors2 = mcolors.TABLEAU_COLORS
 colors3 = mcolors.CSS4_COLORS
-colors4 = cycle_colors
+colors4 = mpl_defaults
+
+cycle_colors = mpl_defaults
+
+cmap_name = 'gist_earth'
+cmap = matplotlib.cm.get_cmap(cmap_name)
+cmap_discrete = [cmap(i/15) for i in range(15)]
+#cycle_colors = cmap_discrete
 
 all_color_names = []
 for name, color in colors1.items():
@@ -17,13 +25,15 @@ for name, color in colors3.items():
     all_color_names+=[name]
 for name in colors4:
     all_color_names+=[name]
+for name in cycle_colors:
+    all_color_names+=[name]
 all_marker_names = ['h','o','X','*','^','v','>','<','s','P','H','D','1','2','3','4']
 
 all_linestyle_names = ['','-','--',':','-.']
 def iscolor(arg):
     if isinstance(arg,str) and arg in all_color_names:
         return True
-    elif isinstance(arg,tuple) and len(arg) == 3:
+    elif isinstance(arg,tuple) and len(arg) in [3,4]:
         for c in arg:
             if not isinstance(c,(int,float)):
                 return False
