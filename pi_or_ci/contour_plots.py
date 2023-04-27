@@ -59,7 +59,8 @@ def get_contour_values(name,mechanism,ions,data=None,cutoffs=None,slope = 1.66):
     
 def plot_contours(ions,redshift,radfield = 'HM12',ax=None, show_cutoffs= False,
                   levels = 'default',data=None,cutoffs=None,mechanism = 'both',
-                  colors = None,cutoff_linewidth = None,fig=None,show_values = False):
+                  colors = None,cutoff_linewidth = None,fig=None,show_values = False,
+                  log='values'):
     if isinstance(ions,str):
         ions = [ions]
     atom = ions[0].split(' ')[0]
@@ -78,7 +79,7 @@ def plot_contours(ions,redshift,radfield = 'HM12',ax=None, show_cutoffs= False,
             line_colors = [show_cutoffs]
         else:
             line_colors = None
-        plot_cutoffs(atom,redshift,radfield,ax=ax,ions=ions,log='values',data = data,\
+        plot_cutoffs(atom,redshift,radfield,ax=ax,ions=ions,log=log,data = data,\
                      cutoffs = cutoffs,colors = line_colors,linewidth = cutoff_linewidth)
     if levels == 'default':
         levels = [0.01,0.1]
@@ -105,9 +106,15 @@ def plot_contours(ions,redshift,radfield = 'HM12',ax=None, show_cutoffs= False,
             im = ax.pcolormesh(np.log10(unique_densities),np.log10(unique_temps),C_to_plot,cmap='seismic')
             if i==0:
                 fig.colorbar(im, ax=ax)
-        ax.contour(np.log10(unique_densities),np.log10(unique_temps),to_plot[i],\
+        if log == 'values':
+            ax.contour(np.log10(unique_densities),np.log10(unique_temps),to_plot[i],\
                    levels = np.array(levels),colors=colors[ion_index],linestyles = 'solid')
-    ax.set_title('Contours for %s at z=%.2f'%(ions,redshift))
+        elif log == 'ticks':
+            ax.contour(unique_densities,unique_temps,to_plot[i],\
+                   levels = np.array(levels),colors=colors[ion_index],linestyles = 'solid') 
+            ax.set_xscale('log')
+            ax.set_yscale('log')
+        ax.set_title('Contours for %s at z=%.2f'%(ions,redshift))
     return ax
 
 def frac_ratio(ion,redshift,radfield = 'HM12',name_to_compare_to = 'split',ax=None, show_cutoffs= False,\
